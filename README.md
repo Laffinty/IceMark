@@ -151,4 +151,4 @@ Running Prefill benchmark (128-token sequence)...
 
 ## License
 
-MIT
+GPLv2
