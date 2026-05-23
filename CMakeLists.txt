@@ -10,7 +10,7 @@ add_executable(icemark
     src/weight_generator.cpp
     src/inference_engine.cpp
     src/benchmark.cpp
-    src/renderer.cpp
+    src/gui_chart.cpp
 )
 
 target_include_directories(icemark PRIVATE ${CMAKE_SOURCE_DIR}/include)

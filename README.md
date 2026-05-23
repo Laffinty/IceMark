@@ -132,16 +132,14 @@ Running Prefill benchmark (128-token sequence)...
   2 thread(s): 2780.4 tokens/s
   ...
 
-  Prefill (tokens/s)
-           3000 |          
-               |        **
-           2250 |      **  **
-               |    **      **
-           1500 |  **          **
-               |**              **
-               +------------------
-                     1  2  3 ...
+======================================
+  Benchmark Complete
+======================================
+
+Model: small | Precision: fp32 | Threads: 16
 ```
+
+After the benchmark completes, a popup window displays the line chart for Prefill and Decode results.
 
 ## Build Requirements
 

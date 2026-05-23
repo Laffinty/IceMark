@@ -2,7 +2,7 @@
 #include "weight_generator.hpp"
 #include "inference_engine.hpp"
 #include "benchmark.hpp"
-#include "renderer.hpp"
+#include "gui_chart.hpp"
 #include <iostream>
 #include <vector>
 #include <thread>
@@ -147,7 +147,8 @@ int main(int argc, char** argv) {
                       << s.tokens_per_sec << " tokens/s\n";
         }
 
-        Renderer::render_line_chart("Prefill (tokens/s)", prefill_threads, prefill_toks);
+        show_chart_window("FP32 Prefill (tokens/s)", "Threads", "tokens/s",
+                         prefill_threads, prefill_toks);
 
         std::vector<double> context_lengths = {128, 512, 1024, 4096};
         for (double ctx : context_lengths) {
@@ -165,8 +166,9 @@ int main(int argc, char** argv) {
             }
 
             std::ostringstream title;
-            title << "Decode (ms/token, ctx=" << (int)ctx << ")";
-            Renderer::render_decode_chart(title.str(), decode_threads, decode_ms);
+            title << "FP32 Decode (ms/token, ctx=" << (int)ctx << ")";
+            show_chart_window(title.str(), "Threads", "ms/token",
+                             decode_threads, decode_ms);
         }
     }
 
@@ -190,7 +192,8 @@ int main(int argc, char** argv) {
                       << s.tokens_per_sec << " tokens/s\n";
         }
 
-        Renderer::render_line_chart("INT8 Prefill (tokens/s)", prefill_threads, prefill_toks);
+        show_chart_window("INT8 Prefill (tokens/s)", "Threads", "tokens/s",
+                          prefill_threads, prefill_toks);
     }
 
     std::cout << "\n======================================\n";
