@@ -1,0 +1,32 @@
+# 编译产物
+Release/
+Debug/
+
+# Visual Studio
+*.ilk
+*.pdb
+*.obj
+*.exe
+*.idb
+*.pch
+*.bsc
+*.sbr
+*.manifest
+*.dep
+
+# 项目文件（保留源文件，忽略中间产物）
+*.opt
+*.plg
+*.ncb
+*.suo
+*.user
+
+# 中间文件
+vc90.pdb
+mt.dep
+BuildLog.htm
+
+# 忽略 Release 和 Debug 目录的二进制
+*.exe.intermediate.manifest
+*.embed.manifest
+*.embed.manifest.res
