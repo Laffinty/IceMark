@@ -2,8 +2,12 @@
 #include <string>
 #include <vector>
 
-void show_chart_window(const std::string& title,
-                       const std::string& x_label,
-                       const std::string& y_label,
-                       const std::vector<double>& x_values,
-                       const std::vector<double>& y_values);
+struct ChartSeries {
+    std::string title;
+    std::string x_label;
+    std::string y_label;
+    std::vector<double> x_values;
+    std::vector<double> y_values;
+};
+
+void show_results_dashboard(const std::vector<ChartSeries>& charts);

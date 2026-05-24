@@ -27,7 +27,23 @@ CPUInfo detect_cpu() {
 
     uint32_t eax, ebx, ecx, edx;
     cpuid(1, 0, &eax, &ebx, &ecx, &edx);
-    info.has_ht = (ebx >> 16) & 0xFF;
+    info.has_ht = (edx >> 28) & 1;
+
+    // Attempt physical core detection via leaf 0xB (Intel SMT level)
+    uint32_t cores = 0;
+    cpuid(0xB, 1, &eax, &ebx, &ecx, &edx);
+    if (ebx != 0) {
+        cores = ebx & 0xFFFF;
+    }
+    if (cores == 0) {
+        cpuid(4, 0, &eax, &ebx, &ecx, &edx);
+        cores = ((eax >> 26) & 0x3F) + 1;
+    }
+    if (cores > 0 && cores <= info.logical_cores) {
+        info.physical_cores = cores;
+    } else if (info.has_ht && info.logical_cores > 1) {
+        info.physical_cores = info.logical_cores / 2;
+    }
 
     cpuid(7, 0, &eax, &ebx, &ecx, &edx);
     info.has_avx2 = (ebx >> 5) & 1;
