@@ -667,7 +667,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         SendMessageW(c1, CB_ADDSTRING, 0, (LPARAM)L"快速");
         SendMessageW(c1, CB_ADDSTRING, 0, (LPARAM)L"标准");
         SendMessageW(c1, CB_ADDSTRING, 0, (LPARAM)L"深度");
-        SendMessageW(c1, CB_SETCURSEL, 1, 0);
+        SendMessageW(c1, CB_SETCURSEL, (WPARAM)g_app.opt.profile, 0);
 
         HWND c2 = CreateWindowExW(0, L"COMBOBOX", nullptr,
                                   WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | WS_VSCROLL, 0, 0, 0,
@@ -678,6 +678,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
             SendMessageW(c2, CB_ADDSTRING, 0, (LPARAM)b);
         }
         SendMessageW(c2, CB_SETCURSEL, 1, 0);
+        for (int i = 0; i < 4; ++i) {
+            if ((uint32_t)(3 + 2 * i) >= g_app.opt.repeats) {
+                SendMessageW(c2, CB_SETCURSEL, i, 0);
+                break;
+            }
+        }
 
         CreateWindowExW(0, L"COMBOBOX", nullptr,
                         WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | WS_VSCROLL, 0, 0, 0,
@@ -686,7 +692,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
 
         CreateWindowExW(0, L"BUTTON", L"INT8 对比", WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX, 0,
                         0, 0, 0, hwnd, (HMENU)(INT_PTR)IDC_INT8, GetModuleHandleW(nullptr), nullptr);
-        SendDlgItemMessageW(hwnd, IDC_INT8, BM_SETCHECK, BST_CHECKED, 0);
+        SendDlgItemMessageW(hwnd, IDC_INT8, BM_SETCHECK,
+                        g_app.opt.with_int8 ? BST_CHECKED : BST_UNCHECKED, 0);
 
         CreateWindowExW(0, L"BUTTON", L"开始测评", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 0,
                         0, hwnd, (HMENU)(INT_PTR)IDC_START, GetModuleHandleW(nullptr), nullptr);
@@ -824,15 +831,13 @@ int run_gui(const RunOptions& initial) {
     UpdateWindow(hwnd);
 
     MSG msg;
-    while (GetMessageW(&msg, nullptr, 0, 0) > 0) {
-        if (msg.message == WM_APP_PROGRESS || msg.message == WM_APP_FINISHED ||
-            IsDialogMessageW(hwnd, &msg)) {
-            TranslateMessage(&msg);
-            DispatchMessageW(&msg);
-        } else {
-            TranslateMessage(&msg);
-            DispatchMessageW(&msg);
-        }
+    while (true) {
+        // GetMessageW returns 0 for WM_QUIT and -1 on error; `> 0` folds both
+        // into "stop", which would swallow a hard error silently.
+        const BOOL r = GetMessageW(&msg, nullptr, 0, 0);
+        if (r <= 0) break;
+        TranslateMessage(&msg);
+        DispatchMessageW(&msg);
     }
 
     if (g_font) DeleteObject(g_font);
